@@ -1,5 +1,16 @@
 from django.forms import BaseInlineFormSet
 from django.core.exceptions import ValidationError
+from django import forms
+
+from smart_test.models import Answer
+
+
+class AnswerForm(forms.ModelForm):
+    is_selected = forms.BooleanField()
+
+    class Meta:
+        model = Answer
+        fields = ['text', 'is_selected']
 
 
 class QuestionsInlineFormSet(BaseInlineFormSet):

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h1>Test list</h1>
+{% endblock %}
+
+
+{% block content %}
+
+    {% if tests %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Image</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Level</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for test in tests %}
+                        <tr>
+                            <td>
+                                <img class="rounded-circle p-1 m-1" width="100" height="100" src="{{ test.image.url }}" alt="Test Image">
+                            </td>
+                            <td>{{ test.title }}</td>
+                            <td>{{ test.description }}</td>
+                            <td>{{ test.level }}</td>
+                            <td>
+                                <a href="{% url 'tests:details' test.id %}">DETAILS</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="p-1 m-1">
+            {% include 'includes/pagination.html' %}
+        </div>
+    {% else %}
+        <p>No Tests yet :(</p>
+    {% endif %}
+
+{% endblock %}
