@@ -21,9 +21,14 @@ from django.urls import path, include
 from django.conf.urls.static import static
 
 urlpatterns = [
+
     path('admin/', admin.site.urls),
 
-    path('tests/', include('smart_test.urls'))
+    path('', include('core.urls')),
+
+    path('accounts/', include('accounts.urls')),
+
+    path('tests/', include('smart_test.urls')),
 ]
 
 urlpatterns += \

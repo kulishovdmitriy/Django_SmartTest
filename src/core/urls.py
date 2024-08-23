@@ -17,19 +17,11 @@ Including another URLconf
 
 from django.urls import path
 
-from accounts.views import AccountCreateView, AccountLoginView, AccountLogoutView, AccountUpdateView, UserListView
+from core.views import index
 
-app_name = "accounts"
+app_name = "core"
 
 urlpatterns = [
 
-    path('registration/', AccountCreateView.as_view(), name='registration'),
-
-    path('login/', AccountLoginView.as_view(), name='login'),
-
-    path('logout/', AccountLogoutView.as_view(), name='logout'),
-
-    path('profile/', AccountUpdateView.as_view(), name='profile'),
-
-    path('', UserListView.as_view(), name='list'),
+    path('', index, name='index'),
 ]

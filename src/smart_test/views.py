@@ -28,7 +28,7 @@ class TestStartView(View):
 
     def get(self, request, id):
 
-        test_result = TestResult.objects.create(
+        TestResult.objects.create(
             user=request.user,
             state=TestResult.STATE.NEW,
             test=Test.objects.get(id=id),

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block header %}
+  <h2>Login in as a user</h2>
+{% endblock %}
+
+{% block content %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            {{form|crispy}}
+
+            <div class="mb-3">
+                <input type="submit" class="btn btn-success" value="Login in">
+
+                <input type="button" class="btn btn-dark" value="Back" onclick="history.back()">
+            </div>
+        </form>
+
+{% endblock %}
