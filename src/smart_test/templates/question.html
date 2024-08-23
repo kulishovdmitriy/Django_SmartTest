@@ -12,14 +12,20 @@
 
         {% csrf_token %}
 
+        {{ form_set.management_form }}
+
         Current question #{{ question.order_number }}/{{ question.test.questions.count }}
 
         {% for form in form_set %}
 
-            {{ form|crispy }}
+            <div class="mt-1">
+
+                {{ form.is_selected }} <label> {{ form.text.value }}</label>
+
+            </div>
 
         {% endfor %}
-        <button type="submit" class="btn btn-success">Submit</button>
+        <button type="submit" class="btn btn-success">Next</button>
     </form>
 
 {% endblock %}
