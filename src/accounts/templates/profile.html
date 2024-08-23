@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block header %}
+  <h2>Edit user</h2>
+{% endblock %}
+
+{% block content %}
+
+        <form method="post" enctype="multipart/form-data">
+        
+            <div style="text-align: center;">
+                <img src="{{ user.profile.image.url }}" alt="Profile Image" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 2px solid #ddd; margin-bottom: 10px;">
+                    <h2>{{ user.username }}</h2>
+                    <p>{{ user.email }}</p>
+            </div>
+
+            {% csrf_token %}
+
+            {{user_form|crispy}}
+
+            {{profile_form|crispy}}
+
+            <div class="mb-3">
+                <input type="submit" class="btn btn-success" value="Save">
+
+                <input type="button" class="btn btn-dark" value="Back" onclick="history.back()">
+            </div>
+        </form>
+
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h2>Welcome to Smart Test</h2>
+{% endblock %}
+
+{% block content %}
+    {% load static %}
+        <div style="text-align: center;">
+            <img src="{% static 'app/base.jpg' %}" alt="Static Image" style="width: 800px; height: 500px;">
+        </div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+<table class="table table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>First_Name</th>
+            <th>Last_Name</th>
+            <th>Email</th>
+            <th>Birthdate</th>
+
+        </tr>
+    </thead>
+
+    {% for user in users %}
+
+        <tr>
+
+            <td>{{ user.id }}</td>
+            <td>{{ user.first_name }}</td>
+            <td>{{ user.last_name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.birth_date }}</td>
+
+            <td>
+
+        </tr>
+
+    {% endfor %}
+</table>

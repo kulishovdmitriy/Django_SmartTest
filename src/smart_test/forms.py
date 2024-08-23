@@ -1,5 +1,17 @@
 from django.forms import BaseInlineFormSet
 from django.core.exceptions import ValidationError
+from django import forms
+from django.forms import modelformset_factory
+
+from smart_test.models import Answer
+
+
+class AnswerForm(forms.ModelForm):
+    is_selected = forms.BooleanField()
+
+    class Meta:
+        model = Answer
+        fields = ['text', 'is_selected']
 
 
 class QuestionsInlineFormSet(BaseInlineFormSet):
@@ -21,7 +33,7 @@ class AnswerInlineFormSet(BaseInlineFormSet):
 
         num_correct_answers = sum([
             1 for form in self.forms
-            if form.cleaned_date["is_correct"]
+            if form.cleaned_data["is_correct"]
         ])
 
         if num_correct_answers == 0:
@@ -29,3 +41,6 @@ class AnswerInlineFormSet(BaseInlineFormSet):
 
         if num_correct_answers == len(self.forms):
             raise ValidationError("Not allowed to select ALL answers!")
+
+
+AnswerFormSet = modelformset_factory(model=Answer, form=AnswerForm, extra=0)

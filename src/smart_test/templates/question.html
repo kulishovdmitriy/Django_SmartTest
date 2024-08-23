@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block header %}
+    <h1>Question: {{ question.text }}?</h1>
+{% endblock %}
+
+{% block content %}
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        {{ form_set.management_form }}
+
+        Current question #{{ question.order_number }}/{{ question.test.questions.count }}
+
+        {% for form in form_set %}
+
+            <div class="mt-1">
+
+                {{ form.is_selected }} <label> {{ form.text.value }}</label>
+
+            </div>
+
+        {% endfor %}
+        <button type="submit" class="btn btn-success">Next</button>
+    </form>
+
+{% endblock %}

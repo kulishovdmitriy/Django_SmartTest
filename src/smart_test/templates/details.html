@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h1>{{ test }}</h1>
+{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col-sm">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Test info</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Description</td>
+                            <td>{{ test.description }}</td>
+                        </tr>
+                        <tr>
+                            <td>Num of questions</td>
+                            <td>{{ test.questions.count }}</td>
+                        </tr>
+                        <tr>
+                            <td>Num of runs</td>
+                            <td>{{ test.test_results.count }}</td>
+                        </tr>
+                        <tr>
+                            <td>Best result</td>
+                            <td> N/A (user: N/A)</td>
+                        </tr>
+                        <tr>
+                            <td>Last run</td>
+                            <td> N/A </td>
+                        </tr>
+                        <tr>
+                            <td>Current open run</td>
+                            <td> N/A </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+
+            </div>
+            <div class="col-sm">
+                <div class="d-flex justify-content-center">
+                    <img class="rounded-circle p-1 m-1" width="300" height="300" src="{{ test.image.url }}" alt="Test Image">
+                </div>
+                <div class="d-flex justify-content-center mt-5 mb-5">
+                    <a href="{% url "tests:start" id=test.id %}" type="button" class="btn-lg btn-success">START</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
