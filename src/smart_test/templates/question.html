@@ -2,8 +2,17 @@
 
 {% load crispy_forms_tags %}
 
+{% load math_funcs %}
+
 {% block header %}
+
     <h1>Question: {{ question.text }}?</h1>
+
+    {% with question.order_number|add:-1|div:question.test.questions.count|mult:100 as progress %}
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width: {{ progress }}%" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    {% endwith %}
 {% endblock %}
 
 {% block content %}
