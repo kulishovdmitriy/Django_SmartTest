@@ -1,12 +1,13 @@
-from django.shortcuts import redirect, render
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import redirect, render, HttpResponse
 from django.urls import reverse
 from django.views import View
 from django.views.generic import ListView, DetailView
-from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
 
 from smart_test.forms import AnswerFormSet
 from smart_test.models import Test, Question, TestResult
+from smart_test.services import TestRunner
 from smart_test.utils import test_result_for_user
 
 
@@ -39,24 +40,41 @@ class TestDetailView(DetailView):
 class TestStartView(LoginRequiredMixin, View):
 
     def get(self, request, id):
+        try:
+            test = Test.objects.get(id=id)
+        except Test.DoesNotExist:
+            return HttpResponse("Test not found", status=404)
 
-        current_user_tests = TestResult.objects.filter(
+        TestResult.objects.get_or_create(
             user=request.user,
             state=TestResult.STATE.NEW,
-            test=Test.objects.get(id=id)
+            test=test,
+            defaults={
+                'num_correct_answers': 0,
+                'num_incorrect_answers': 0,
+                'current_order_number': 1,
+            }
         )
 
-        if current_user_tests.count() == 0:
-            TestResult.objects.create(
-                user=request.user,
-                state=TestResult.STATE.NEW,
-                test=Test.objects.get(id=id),
-                num_correct_answers=0,
-                num_incorrect_answers=0,
-                current_order_number=1,
+        return redirect(reverse('tests:next', args=(id, )))
+
+    @staticmethod
+    def on_next(context, test_result):
+        request = context['request']
+        if test_result.state == TestResult.STATE.NEW:
+            return redirect(reverse('tests:next', args=(test_result.test.id,)))
+
+        elif test_result.state == TestResult.STATE.FINISHED:
+            return render(
+                request=request,
+                template_name='finish.html',
+                context={
+                    'test_result': test_result,
+                    'test_result_score': (test_result.num_correct_answers / test_result.test.questions.count()) * 100
+                }
             )
 
-        return redirect(reverse('tests:next', args=(id, )))
+        return HttpResponse(f'Unexpected state {test_result.state}!', status=500)
 
 
 class TestQuestionView(LoginRequiredMixin, View):
@@ -65,8 +83,12 @@ class TestQuestionView(LoginRequiredMixin, View):
 
         test_result = test_result_for_user(request.user, id)
 
-        order_number = test_result.current_order_number
+        if test_result.count() == 0:
+            return redirect(reverse('tests:details', args=(id,)))
 
+        test_result = test_result.first()
+
+        order_number = test_result.current_order_number
         question = Question.objects.get(test__id=id, order_number=order_number)
         answers = question.answers.all()
 
@@ -85,10 +107,10 @@ class TestQuestionView(LoginRequiredMixin, View):
 
         test_result = test_result_for_user(request.user, id)
 
-        order_number = test_result.current_order_number
+        if test_result.count() == 0:
+            return redirect(reverse('tests:details', args=(id,)))
 
-        question = Question.objects.get(test__id=id, order_number=order_number)
-        answer = question.answers.all()
+        test_result = test_result.first()
 
         form_set = AnswerFormSet(data=request.POST)
 
@@ -105,38 +127,19 @@ class TestQuestionView(LoginRequiredMixin, View):
             return redirect(reverse('tests:next', args=(id, )))
 
         if num_selected_choices == possible_choices:
-            messages.error(request, extra_tags='danger', message='ERROR: You can`t select ALL answer')
+            messages.error(request, extra_tags='danger', message='ERROR: You cant select ALL answer')
             return redirect(reverse('tests:next', args=(id, )))
 
-        current_choices = sum(
-            answer.is_correct == choice
-            for answer, choice in zip(answer, selected_choices)
+        test_runner = TestRunner(
+            on_next=TestStartView.on_next,
+            test_result=test_result
         )
 
-        point = int(current_choices == possible_choices)
-
-        test_result = TestResult.objects.get(
-            user=request.user,
-            test=question.test,
-            state=TestResult.STATE.NEW
+        result = test_runner.next(
+            context={
+                'request': request,
+                'selected_choices': selected_choices
+            }
         )
 
-        test_result.num_correct_answers += point
-        test_result.num_incorrect_answers += (1 - point)
-        test_result.current_order_number += 1
-        test_result.save()
-
-        if order_number == question.test.questions.count():
-            test_result.state = TestResult.STATE.FINISHED
-            test_result.save()
-
-            return render(
-                request=request,
-                template_name='finish.html',
-                context={
-                    'test_result': test_result,
-                    'test_result_score': (test_result.num_correct_answers/test_result.test.questions.count()) * 100
-                }
-            )
-
-        return redirect(reverse('tests:next', args=(id, )))
+        return result
