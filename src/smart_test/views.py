@@ -3,9 +3,11 @@ from django.urls import reverse
 from django.views import View
 from django.views.generic import ListView, DetailView
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from smart_test.forms import AnswerFormSet
 from smart_test.models import Test, Question, TestResult
+from smart_test.utils import test_result_for_user
 
 
 # Create your views here.
@@ -23,25 +25,47 @@ class TestDetailView(DetailView):
     context_object_name = 'test'
     pk_url_kwarg = 'id'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['continue_flag'] = TestResult.objects.filter(
+            user=self.request.user,
+            state=TestResult.STATE.NEW,
+            test=self.get_object(),
+        ).count()
 
-class TestStartView(View):
+        return context
+
+
+class TestStartView(LoginRequiredMixin, View):
 
     def get(self, request, id):
 
-        TestResult.objects.create(
+        current_user_tests = TestResult.objects.filter(
             user=request.user,
             state=TestResult.STATE.NEW,
-            test=Test.objects.get(id=id),
-            num_correct_answers=0,
-            num_incorrect_answers=0,
+            test=Test.objects.get(id=id)
         )
 
-        return redirect(reverse('tests:question', args=(id, 1)))
+        if current_user_tests.count() == 0:
+            TestResult.objects.create(
+                user=request.user,
+                state=TestResult.STATE.NEW,
+                test=Test.objects.get(id=id),
+                num_correct_answers=0,
+                num_incorrect_answers=0,
+                current_order_number=1,
+            )
+
+        return redirect(reverse('tests:next', args=(id, )))
 
 
-class TestQuestionView(View):
+class TestQuestionView(LoginRequiredMixin, View):
 
-    def get(self, request, id, order_number):
+    def get(self, request, id):
+
+        test_result = test_result_for_user(request.user, id)
+
+        order_number = test_result.current_order_number
 
         question = Question.objects.get(test__id=id, order_number=order_number)
         answers = question.answers.all()
@@ -57,10 +81,13 @@ class TestQuestionView(View):
             }
         )
 
-    def post(self, request, id, order_number):
+    def post(self, request, id):
+
+        test_result = test_result_for_user(request.user, id)
+
+        order_number = test_result.current_order_number
 
         question = Question.objects.get(test__id=id, order_number=order_number)
-        test = question.test
         answer = question.answers.all()
 
         form_set = AnswerFormSet(data=request.POST)
@@ -75,11 +102,11 @@ class TestQuestionView(View):
 
         if num_selected_choices == 0:
             messages.error(request, extra_tags='danger', message='ERROR: You should select at least 1 answer')
-            return redirect(reverse('tests:question', args=(id, order_number)))
+            return redirect(reverse('tests:next', args=(id, )))
 
         if num_selected_choices == possible_choices:
             messages.error(request, extra_tags='danger', message='ERROR: You can`t select ALL answer')
-            return redirect(reverse('tests:question', args=(id, order_number)))
+            return redirect(reverse('tests:next', args=(id, )))
 
         current_choices = sum(
             answer.is_correct == choice
@@ -88,20 +115,15 @@ class TestQuestionView(View):
 
         point = int(current_choices == possible_choices)
 
-        test_results = TestResult.objects.filter(
+        test_result = TestResult.objects.get(
             user=request.user,
-            test=test,
+            test=question.test,
             state=TestResult.STATE.NEW
         )
 
-        if test_results.exists():
-            test_result = test_results.first()
-
-        else:
-            test_result = TestResult.objects.create(user=request.user, test=test, state=TestResult.STATE.NEW)
-
         test_result.num_correct_answers += point
         test_result.num_incorrect_answers += (1 - point)
+        test_result.current_order_number += 1
         test_result.save()
 
         if order_number == question.test.questions.count():
@@ -113,9 +135,8 @@ class TestQuestionView(View):
                 template_name='finish.html',
                 context={
                     'test_result': test_result,
-                    'time_spent': test_result.write_date - test_result.create_date,
                     'test_result_score': (test_result.num_correct_answers/test_result.test.questions.count()) * 100
                 }
             )
 
-        return redirect(reverse('tests:question', args=(id, order_number + 1)))
+        return redirect(reverse('tests:next', args=(id, )))

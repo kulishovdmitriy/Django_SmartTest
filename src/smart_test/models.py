@@ -1,8 +1,11 @@
+import datetime
+
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 from accounts.models import User
 from core.models import BaseModel
+
 
 # Create your models here.
 
@@ -64,13 +67,20 @@ class TestResult(BaseModel):
     test = models.ForeignKey(to=Test, related_name="test_results", on_delete=models.CASCADE)
     state = models.PositiveSmallIntegerField(default=STATE.NEW, choices=STATE.choices)
 
-    score = models.DecimalField(default=0.0, decimal_places=2, max_digits=5,
-                                validators=[MinValueValidator(0), MaxValueValidator(100)])
-
     num_correct_answers = models.PositiveSmallIntegerField(default=0,
                                                            validators=[MaxValueValidator(Question.ANSWER_MAX_LIMIT)])
     num_incorrect_answers = models.PositiveSmallIntegerField(default=0,
                                                              validators=[MaxValueValidator(Question.ANSWER_MAX_LIMIT)])
 
+    current_order_number = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(Test.QUESTION_MAX_LIMIT)])
+
+    def time_spent(self):
+        time_spent = self.write_date - self.create_date
+        return time_spent - datetime.timedelta(microseconds=time_spent.microseconds)
+
+    # def point(self):
+    #     return max(0, self.num_correct_answers - self.num_incorrect_answers)
+
     def __str__(self):
-        return f"{self.test}, run by {self.user.full_name()} at {self.write_date}"
+        return f"{self.test}, run by {self.user.get_full_name()} at {self.write_date}"
