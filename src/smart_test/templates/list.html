@@ -27,7 +27,7 @@
                             </td>
                             <td>{{ test.title }}</td>
                             <td>{{ test.description }}</td>
-                            <td>{{ test.level }}</td>
+                            <td>{{ test.get_level_display }}</td>
                             <td>
                                 <a href="{% url 'tests:details' test.id %}">DETAILS</a>
                             </td>
