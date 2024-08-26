@@ -1,5 +1,6 @@
 asgiref==3.8.1
 asttokens==2.4.1
+colorama==0.4.6
 crispy-bootstrap5==2024.2
 decorator==5.1.1
 Django==5.1

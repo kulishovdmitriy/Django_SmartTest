@@ -35,6 +35,9 @@ class Test(models.Model):
     def __str__(self):
         return f"{self.title}"
 
+    class Meta:
+        ordering = ['title']
+
 
 class Question(models.Model):
     ANSWER_MIN_LIMIT = 3

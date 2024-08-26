@@ -14,9 +14,10 @@ class TestUrls(TestCase):
         init(autoreset=True)
         self.client = Client()
 
-    def test_urls_smart_public_availability(self):
+    def test_urls_accounts_public_availability(self):
         urls = [
-            reverse('tests:list'),
+            reverse('accounts:registration'),
+            reverse('accounts:login')
         ]
 
         for url in urls:
@@ -25,21 +26,17 @@ class TestUrls(TestCase):
                 print(Fore.GREEN + f'URL {url} доступен' + Style.RESET_ALL)
             else:
                 print(Fore.RED + f'URL {url} недоступен, статус: {response.status_code}' + Style.RESET_ALL)
+            self.assertEqual(response.status_code, 200)
 
-    def test_urls_smart_private_authenticated_availability(self):
-
+    def test_urls_accounts_private_authenticated_availability(self):
         urls = [
-            reverse('tests:start', args=(1, )),
-            reverse('tests:next', args=(1, )),
+            reverse('accounts:profile'),
         ]
 
         self.client.login(username='admin', password='admin')
 
         for url in urls:
             response = self.client.get(url)
-            if response.status_code == 200:
+
+            if response.status_code == 302:
                 print(Fore.GREEN + f'URL {url} доступен' + Style.RESET_ALL)
-            elif response.status_code == 302:
-                print(Fore.YELLOW + f'URL {url} перенаправляет, статус: {response.status_code}' + Style.RESET_ALL)
-            else:
-                print(Fore.RED + f'URL {url} недоступен, статус: {response.status_code}' + Style.RESET_ALL)
