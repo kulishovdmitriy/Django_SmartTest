@@ -71,9 +71,9 @@ class TestResult(BaseModel):
     state = models.PositiveSmallIntegerField(default=STATE.NEW, choices=STATE.choices)
 
     num_correct_answers = models.PositiveSmallIntegerField(default=0,
-                                                           validators=[MaxValueValidator(Question.ANSWER_MAX_LIMIT)])
+                                                           validators=[MaxValueValidator(Test.QUESTION_MAX_LIMIT)])
     num_incorrect_answers = models.PositiveSmallIntegerField(default=0,
-                                                             validators=[MaxValueValidator(Question.ANSWER_MAX_LIMIT)])
+                                                             validators=[MaxValueValidator(Test.QUESTION_MAX_LIMIT)])
 
     current_order_number = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(Test.QUESTION_MAX_LIMIT)])
@@ -82,8 +82,11 @@ class TestResult(BaseModel):
         time_spent = self.write_date - self.create_date
         return time_spent - datetime.timedelta(microseconds=time_spent.microseconds)
 
-    # def point(self):
-    #     return max(0, self.num_correct_answers - self.num_incorrect_answers)
+    def points(self):
+        return max(0, self.num_correct_answers - self.num_incorrect_answers)
+
+    def score(self):
+        return (self.num_correct_answers/self.test.questions.count())*100
 
     def __str__(self):
         return f"{self.test}, run by {self.user.get_full_name()} at {self.write_date}"
