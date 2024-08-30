@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python manage.py runserver 0:"${PORT}"
+python project/manage.py runserver 0:"${PORT}"
