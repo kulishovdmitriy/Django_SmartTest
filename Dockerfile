@@ -7,7 +7,7 @@ RUN mkdir /srv/project
 WORKDIR /srv
 
 COPY ./src ./project
-COPY requirements.txt ./
+COPY ./requirements.txt ./
 COPY ./run_server.sh ./
 
 RUN python -m pip install --upgrade pip
