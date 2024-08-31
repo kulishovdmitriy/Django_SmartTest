@@ -5,9 +5,10 @@ services:
     container_name: backend
     restart: always
     ports:
-      - "8010:8000"
+      - "8010:${PORT}"
     volumes:
       - ./src:/srv/project
+      - static_content:/var/www/smart_test
     env_file:
       - .env
     depends_on:
@@ -26,5 +27,21 @@ services:
       - "5432:5432"
 
 
+  nginx:
+    env_file:
+      - .env
+    image: nginx:1.27-alpine
+    container_name: nginx
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - static_content:/var/www/smart_test
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+
+
 volumes:
   pgdata: {}
+  static_content: {}
