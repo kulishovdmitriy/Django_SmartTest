@@ -8,5 +8,23 @@ services:
       - "8010:8000"
     volumes:
       - ./src:/srv/project
-    environment:
-      - PORT=8000
+    env_file:
+      - .env
+    depends_on:
+      - postgresql
+
+
+  postgresql:
+    image: "postgres:13"
+    container_name: postgresql
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+
+volumes:
+  pgdata: {}

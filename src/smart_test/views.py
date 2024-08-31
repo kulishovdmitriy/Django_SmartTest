@@ -20,7 +20,7 @@ class TestListView(ListView):
     paginate_by = 10
 
 
-class TestDetailView(DetailView):
+class TestDetailView(LoginRequiredMixin, DetailView):
     model = Test
     template_name = 'details.html'
     context_object_name = 'test'

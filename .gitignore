@@ -2,7 +2,6 @@
 __pycache__/
 .idea/
 media/
-static/
 
 *.py[cod]
 *$py.class
@@ -91,7 +90,6 @@ celerybeat-schedule
 
 # dotenv
 .env
-.env.*
 
 # virtualenv
 venv/
