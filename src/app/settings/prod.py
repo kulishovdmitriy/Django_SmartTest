@@ -5,7 +5,7 @@ from app.settings.components.database import * # noqa
 
 DEBUG = False
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(':')
 
 STATIC_ROOT = '/var/www/smart_test/static'
 
