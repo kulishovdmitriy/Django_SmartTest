@@ -1,18 +1,19 @@
 FROM python:3.10
 
-RUN apt-get update
-RUN apt-get install git
+RUN apt-get update && apt-get install -y git
 
-RUN mkdir /srv/project
-WORKDIR /srv
+RUN mkdir -p /project/src
+WORKDIR /project/src
 
-COPY ./src ./project
+COPY ./src ./
+
+WORKDIR /project
 COPY ./requirements.txt ./
-COPY ./run_server.sh ./
+COPY ./commands ./
 
-RUN python -m pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN python -m pip install --upgrade pip && \
+    pip install -r requirements.txt
 
-RUN chmod +x ./run_server.sh
+WORKDIR /project/src
 
-CMD ["./run_server.sh"]
+CMD ["bash"]
