@@ -32,3 +32,8 @@ class AccountProfileUpdateForm(ModelForm):
     class Meta:
         model = Profile
         fields = ["image", "interests"]
+
+
+class ContactUsForm(forms.Form):
+    subject = forms.CharField(max_length=256, initial="Message from Smart_Test")
+    message = forms.CharField(widget=forms.Textarea)
