@@ -1,3 +1,4 @@
+import logging
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
@@ -6,12 +7,17 @@ from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView
 from django.views.generic import ListView
-from django.views.generic.edit import ProcessFormView
+from django.views.generic.edit import ProcessFormView, FormView
+from django.core.mail import send_mail
+from django.conf import settings
 
-from accounts.forms import AccountCreateForm, AccountUpdateForm, AccountProfileUpdateForm
+from accounts.forms import AccountCreateForm, AccountUpdateForm, AccountProfileUpdateForm, ContactUsForm
 from accounts.models import User
 
+
 # Create your views here.
+
+logger = logging.getLogger('accounts')
 
 
 class UserListView(ListView):
@@ -110,3 +116,29 @@ class AccountUpdateView(LoginRequiredMixin, ProcessFormView):
                 "profile_form": profile_form,
             }
         )
+
+
+class ContactUsView(LoginRequiredMixin, FormView):
+    template_name = "contact_us.html"
+    extra_content = {"title": "Send us a message!"}
+    success_url = reverse_lazy("core:index")
+    form_class = ContactUsForm
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            try:
+                logger.info("Email sent")
+                send_mail(
+                    subject=form.cleaned_data["subject"],
+                    message=form.cleaned_data["message"],
+                    from_email=request.user.email,
+                    recipient_list=[settings.EMAIL_HOST_RECIPIENT],
+                    fail_silently=False,
+                )
+                logger.info(f"Email sent successfully to {settings.EMAIL_HOST_RECIPIENT} from {request.user.email}")
+            except Exception as e:
+                logger.error(f"Error sending email: {e}")
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)

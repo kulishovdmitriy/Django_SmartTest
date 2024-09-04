@@ -39,6 +39,13 @@
                 </form>
               </li>
 
+              <li class="nav-item">
+                <form method="post" action="{% url 'accounts:contact_us' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="nav-link btn btn-link">Contact Us</button>
+                </form>
+              </li>
+
           {% else %}
 
               <li class="nav-item">

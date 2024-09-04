@@ -17,7 +17,7 @@ Including another URLconf
 
 from django.urls import path
 
-from accounts.views import AccountCreateView, AccountLoginView, AccountLogoutView, AccountUpdateView, UserListView
+from accounts.views import AccountCreateView, AccountLoginView, AccountLogoutView, AccountUpdateView, ContactUsView
 
 app_name = "accounts"
 
@@ -31,5 +31,5 @@ urlpatterns = [
 
     path('profile/', AccountUpdateView.as_view(), name='profile'),
 
-    path('', UserListView.as_view(), name='list'),
+    path('contact_us/', ContactUsView.as_view(), name='contact_us'),
 ]
