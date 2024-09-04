@@ -19,6 +19,7 @@ from accounts.models import User
 
 logger = logging.getLogger('accounts')
 
+
 class UserListView(ListView):
 
     model = User

@@ -17,8 +17,7 @@ Including another URLconf
 
 from django.urls import path
 
-from accounts.views import AccountCreateView, AccountLoginView, AccountLogoutView, AccountUpdateView, UserListView, \
-    ContactUsView
+from accounts.views import AccountCreateView, AccountLoginView, AccountLogoutView, AccountUpdateView, ContactUsView
 
 app_name = "accounts"
 
