@@ -14,37 +14,88 @@ services:
       - static_content:/var/www/smart_test
     environment:
       - DJANGO_SETTINGS_MODULE=app.settings.${RUN_MODE}
-    env_file:
-      - .env
     depends_on:
       - postgresql
+    env_file:
+      - .env
 
 
   postgresql:
     image: "postgres:13"
     container_name: postgresql
     restart: always
-    env_file:
-      - .env
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    env_file:
+      - .env
 
 
   nginx:
-    env_file:
-      - .env
     image: nginx:1.27-alpine
     container_name: nginx
-    volumes:
-      - ./nginx:/etc/nginx/conf.d
-      - static_content:/var/www/smart_test
+    restart: always
     ports:
       - "80:80"
       - "443:443"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - static_content:/var/www/smart_test
     depends_on:
       - backend
+    env_file:
+      - .env
+
+#  rabbitmq:
+#    image: rabbitmq:3.13.7-management-alpine
+#    container_name: rabbitmq
+#    restart: always
+#    ports:
+#      - "8181:15672"
+#      - "5672:5672"
+#    env_file:
+#      - .env
+
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis
+    restart: always
+    env_file:
+      - .env
+
+
+  celery:
+    build: .
+    container_name: celery
+    restart: always
+    command:
+      - ../commands/start_celery.sh
+    environment:
+      - DJANGO_SETTINGS_MODULE=app.settings.${RUN_MODE}
+    volumes:
+      - ./src:/project/src
+      - ./commands:/project/commands
+    depends_on:
+      - redis
+    env_file:
+      - .env
+
+  celery_beat:
+    build: .
+    container_name: celery_beat
+    restart: always
+    command:
+      - ../commands/start_celery_beat.sh
+    volumes:
+      - ./src:/project/src
+      - ./commands:/project/commands
+    depends_on:
+      - celery
+      - redis
+    env_file:
+      - .env
 
 
 volumes:
