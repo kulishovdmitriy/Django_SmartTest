@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h2>Bad Request</h2>
+{% endblock %}
+
+{% block content %}
+    <h1>Sorry, there was an error with your request.</h1>
+    <div>
+        <a class="btn btn-primary" href="{% url 'core:index' %}">Go to Home</a>
+    </div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h2>Forbidden</h2>
+{% endblock %}
+
+{% block content %}
+    <h1>You do not have permission to access this resource.</h1>
+    <div>
+        <a class="btn btn-primary" href="{% url 'core:index' %}">Go to Home</a>
+    </div>
+{% endblock %}

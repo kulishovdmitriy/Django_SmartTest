@@ -6,7 +6,7 @@ from app.settings.components.email import * # noqa
 from app.settings.components.celery_redis_config import * # noqa
 
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(':')
 
