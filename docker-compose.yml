@@ -47,13 +47,21 @@ services:
     env_file:
       - .env
 
-  rabbitmq:
-    image: rabbitmq:3.13.7-management-alpine
-    container_name: rabbitmq
+#  rabbitmq:
+#    image: rabbitmq:3.13.7-management-alpine
+#    container_name: rabbitmq
+#    restart: always
+#    ports:
+#      - "8181:15672"
+#      - "5672:5672"
+#    env_file:
+#      - .env
+
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis
     restart: always
-    ports:
-      - "8181:15672"
-      - "5672:5672"
     env_file:
       - .env
 
@@ -70,7 +78,22 @@ services:
       - ./src:/project/src
       - ./commands:/project/commands
     depends_on:
-      - rabbitmq
+      - redis
+    env_file:
+      - .env
+
+  celery_beat:
+    build: .
+    container_name: celery_beat
+    restart: always
+    command:
+      - ../commands/start_celery_beat.sh
+    volumes:
+      - ./src:/project/src
+      - ./commands:/project/commands
+    depends_on:
+      - celery
+      - redis
     env_file:
       - .env
 

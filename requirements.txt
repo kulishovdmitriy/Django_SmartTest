@@ -1,6 +1,7 @@
 amqp==5.2.0
 asgiref==3.8.1
 asttokens==2.4.1
+async-timeout==4.0.3
 billiard==4.2.0
 celery==5.4.0
 click==8.1.7
@@ -38,6 +39,7 @@ pyflakes==3.2.0
 Pygments==2.18.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
+redis==5.0.8
 six==1.16.0
 sqlparse==0.5.1
 stack-data==0.6.3
