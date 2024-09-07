@@ -1,8 +1,8 @@
 from app.settings.components.base import * # noqa
 from app.settings.components.dev_tools import * # noqa
-from app.settings.components.celery import * # noqa
 
-DEBUG = True
+
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
