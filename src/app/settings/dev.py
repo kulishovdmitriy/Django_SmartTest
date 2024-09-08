@@ -1,6 +1,6 @@
 from app.settings.components.base import * # noqa
 from app.settings.components.dev_tools import * # noqa
-
+from app.settings.components.rest import * # noqa
 
 DEBUG = False
 
