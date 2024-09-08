@@ -11,6 +11,6 @@ CELERY_TIMEZONE = 'UTC'
 CELERY_BEAT_SCHEDULE = {
     'some_task': {
         'task': 'smart_test.tasks.cleanup_outdated_test_results',
-        'schedule': crontab(minute='*/50')
+        'schedule': crontab(minute='0', hour='*/5')
     }
 }
