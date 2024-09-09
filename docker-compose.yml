@@ -41,6 +41,7 @@ services:
       - "443:443"
     volumes:
       - ./nginx:/etc/nginx/conf.d
+      - ./nginx/error_page:/etc/nginx/html
       - static_content:/var/www/smart_test
     depends_on:
       - backend
