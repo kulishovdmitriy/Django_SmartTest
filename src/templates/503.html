@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>Service Unavailable:503</title>
+{% endblock %}
+
+{% block header %}
+  <h2>Service Unavailable</h2>
+{% endblock %}
+
+{% block content %}
+    <h1>Sorry, the service is temporarily unavailable. Please try again later.</h1>
+    <p>If you need assistance, please contact support.</p>
+    <div>
+        <a class="btn btn-primary" href="{% url 'core:index' %}">Go to Home</a>
+    </div>
+{% endblock %}

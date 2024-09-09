@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>Too Many Requests:429</title>
+{% endblock %}
+
+{% block header %}
+    <h2>Too Many Requests</h2>
+{% endblock %}
+
+{% block content %}
+    <h1>You have sent too many requests in a given amount of time</h1>
+    <p>Please try again later.</p>
+    <div>
+        <a class="btn btn-primary" href="{% url 'core:index' %}">Go to Home</a>
+    </div>
+{% endblock %}
