@@ -16,6 +16,10 @@
             <div class="mb-3">
                 <input type="submit" class="btn btn-success" value="Login in">
 
+                <div class="small text-center">
+                    <a href="{% url "accounts:password_reset" %}" class="text-center"><i>Forgot Password?</i></a>
+                </div>
+
                 <input type="button" class="btn btn-dark" value="Back" onclick="history.back()">
             </div>
         </form>
