@@ -10,6 +10,7 @@ class TestForm(forms.ModelForm):
         model = Test
         fields = ['title', 'description', 'topic', 'level', 'image']
 
+
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question

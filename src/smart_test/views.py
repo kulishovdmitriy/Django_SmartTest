@@ -173,6 +173,7 @@ class TestCreateView(CreateView):
                 questions.save()
         return response
 
+
 class TestUpdateView(UpdateView):
     model = Test
     form_class = TestForm
