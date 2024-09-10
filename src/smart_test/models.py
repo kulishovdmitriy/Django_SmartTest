@@ -90,3 +90,26 @@ class TestResult(BaseModel):
 
     def __str__(self):
         return f"{self.test}, run by {self.user.get_full_name()} at {self.write_date}"
+
+    @staticmethod
+    def best_result(test_id):
+        queryset = TestResult.objects.filter(test=test_id)
+        if queryset.count() > 0:
+            obj = queryset.extra(select={
+                'points': 'num_correct_answers - num_incorrect_answers', 'duration': 'write_date - create_date'},
+                order_by=['-points', 'duration'])[0]
+            result = f'{obj.user} scored {obj.num_correct_answers} points'
+            return result
+        else:
+            result = 'No one has done this test yet'
+            return result
+
+    @staticmethod
+    def last_run(test_id):
+        if TestResult.objects.filter(test=test_id).count() > 0:
+            ob = TestResult.objects.filter(test=test_id).order_by('-write_date').first()
+            result = ob.write_date
+            return result
+        else:
+            result = 'No one has run this test yet'
+            return result

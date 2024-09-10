@@ -1,6 +1,7 @@
 from django.urls import path
 
-from smart_test.views import TestListView, TestDetailView, TestStartView, TestQuestionView
+from smart_test.views import TestListView, TestDetailView, TestStartView, TestQuestionView, TestCreateView, \
+    TestUpdateView
 
 app_name = "tests"
 
@@ -12,5 +13,10 @@ urlpatterns = [
 
     path('<int:id>/start/', TestStartView.as_view(), name='start'),
 
-    path('<int:id>/next/', TestQuestionView.as_view(), name='next')
+    path('<int:id>/next/', TestQuestionView.as_view(), name='next'),
+
+    path('test/create/', TestCreateView.as_view(), name='test_create'),
+
+    path('test/<int:pk>/edit/', TestUpdateView.as_view(), name='test_edit'),
+
 ]

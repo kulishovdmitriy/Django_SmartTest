@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block header %}
+    <h1>{% if form.instance.pk %}Edit{% else %}Create{% endif %} Test</h1>
+{% endblock %}
+
+{% block content %}
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {{ form|crispy }}
+
+    <h3>Questions</h3>
+
+    {{ questions.management_form }}
+
+    {% for form in questions %}
+
+      <div class="formset-row">
+        {{ form|crispy }}
+
+        {% if form.instance.pk %}
+
+          <h4>Answers</h4>
+
+          {% for answer_form in form.answer_set.all %}
+            {{ answer_form|crispy }}
+
+          {% endfor %}
+
+        {% endif %}
+
+      </div>
+    {% endfor %}
+
+    <button type="submit">Save</button>
+  </form>
+{% endblock %}
+
+
+
+
+
+{#{% extends 'base.html' %}#}
+{##}
+{#{% load crispy_forms_tags %}#}
+{##}
+{#{% block header %}#}
+{#    <h1>{% if form.instance.pk %}Edit{% else %}Create{% endif %} Test</h1>#}
+{#{% endblock %}#}
+{##}
+{#{% block content %}#}
+{#  <form method="post" enctype="multipart/form-data">#}
+{#    {% csrf_token %}#}
+{##}
+{#    {{ form|crispy }}#}
+{#    {{ topic_form|crispy }}#}
+{##}
+{#    <h3>Questions</h3>#}
+{##}
+{#    {% for question_form, answer_formset in question_answer_formsets %}#}
+{#      <div class="formset-row">#}
+{#        {{ question_form|crispy }}#}
+{##}
+{#        <h4>Answers</h4>#}
+{#        {{ answer_formset.management_form }}#}
+{##}
+{#        {% for answer_form in answer_formset %}#}
+{#          {{ answer_form|crispy }}#}
+{#        {% endfor %}#}
+{#      </div>#}
+{#    {% endfor %}#}
+{##}
+{#    <button type="submit" class="btn btn-success">Save</button>#}
+{#  </form>#}
+{#{% endblock %}#}

@@ -3,9 +3,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render, HttpResponse
 from django.urls import reverse
 from django.views import View
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.db import transaction
 
-from smart_test.forms import AnswerFormSet
+from smart_test.forms import AnswerFormSet, TestForm, QuestionFormSet
 from smart_test.models import Test, Question, TestResult
 from smart_test.services import TestRunner
 from smart_test.utils import test_result_for_user
@@ -28,6 +29,9 @@ class TestDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        test_id = self.kwargs['id']
+        context['best_result'] = TestResult.best_result(test_id)
+        context['last_run'] = TestResult.last_run(test_id)
         context['continue_flag'] = TestResult.objects.filter(
             user=self.request.user,
             state=TestResult.STATE.NEW,
@@ -143,3 +147,52 @@ class TestQuestionView(LoginRequiredMixin, View):
         )
 
         return result
+
+
+class TestCreateView(CreateView):
+    model = Test
+    form_class = TestForm
+    template_name = 'test_form.html'
+    success_url = '/tests/'
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        if self.request.POST:
+            data['questions'] = QuestionFormSet(self.request.POST)
+        else:
+            data['questions'] = QuestionFormSet()
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        questions = context['questions']
+        with transaction.atomic():
+            response = super().form_valid(form)
+            if questions.is_valid():
+                questions.instance = self.object
+                questions.save()
+        return response
+
+class TestUpdateView(UpdateView):
+    model = Test
+    form_class = TestForm
+    template_name = 'test_form.html'
+    success_url = '/tests/'
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        if self.request.POST:
+            data['questions'] = QuestionFormSet(self.request.POST, instance=self.object)
+        else:
+            data['questions'] = QuestionFormSet(instance=self.object)
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        questions = context['questions']
+        with transaction.atomic():
+            response = super().form_valid(form)
+            if questions.is_valid():
+                questions.instance = self.object
+                questions.save()
+        return response
