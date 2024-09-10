@@ -1,9 +1,20 @@
-from django.forms import BaseInlineFormSet
+from django.forms import BaseInlineFormSet, modelformset_factory, inlineformset_factory
 from django.core.exceptions import ValidationError
 from django import forms
-from django.forms import modelformset_factory
 
-from smart_test.models import Answer
+from smart_test.models import Answer, Test, Question
+
+
+class TestForm(forms.ModelForm):
+    class Meta:
+        model = Test
+        fields = ['title', 'description', 'topic', 'level', 'image']
+
+
+class QuestionForm(forms.ModelForm):
+    class Meta:
+        model = Question
+        fields = ['order_number', 'text']
 
 
 class AnswerForm(forms.ModelForm):
@@ -44,3 +55,5 @@ class AnswerInlineFormSet(BaseInlineFormSet):
 
 
 AnswerFormSet = modelformset_factory(model=Answer, form=AnswerForm, extra=0)
+QuestionFormSet = inlineformset_factory(Test, Question, form=QuestionForm, extra=1, can_delete=True)
+# AnswerFormSet = inlineformset_factory(Question, Answer, form=AnswerForm, extra=1, can_delete=True)
