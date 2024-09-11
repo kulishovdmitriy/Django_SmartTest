@@ -149,7 +149,7 @@ class TestQuestionView(LoginRequiredMixin, View):
         return result
 
 
-class TestCreateView(CreateView):
+class TestCreateView(LoginRequiredMixin, CreateView):
     model = Test
     form_class = TestForm
     template_name = 'test_form.html'
@@ -174,11 +174,12 @@ class TestCreateView(CreateView):
         return response
 
 
-class TestUpdateView(UpdateView):
+class TestUpdateView(LoginRequiredMixin, UpdateView):
     model = Test
     form_class = TestForm
     template_name = 'test_form.html'
     success_url = '/tests/'
+    pk_url_kwarg = 'id'
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
