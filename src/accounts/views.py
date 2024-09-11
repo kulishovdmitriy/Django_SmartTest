@@ -9,11 +9,11 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView
 from django.views.generic import ListView
 from django.views.generic.edit import ProcessFormView, FormView
-from django.core.mail import send_mail
 from django.conf import settings
 
 from accounts.forms import AccountCreateForm, AccountUpdateForm, AccountProfileUpdateForm, ContactUsForm
 from accounts.models import User
+from accounts.tasks import send_contact_email
 
 
 # Create your views here.
@@ -130,13 +130,13 @@ class ContactUsView(LoginRequiredMixin, FormView):
         if form.is_valid():
             try:
                 logger.info("Email sent")
-                send_mail(
+
+                send_contact_email.delay(
                     subject=form.cleaned_data["subject"],
                     message=form.cleaned_data["message"],
-                    from_email=request.user.email,
-                    recipient_list=[settings.EMAIL_HOST_RECIPIENT],
-                    fail_silently=False,
+                    from_email=request.user.email
                 )
+
                 logger.info(f"Email sent successfully to {settings.EMAIL_HOST_RECIPIENT} from {request.user.email}")
             except Exception as e:
                 logger.error(f"Error sending email: {e}")

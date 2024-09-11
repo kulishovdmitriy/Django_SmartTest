@@ -24,7 +24,12 @@ Create a file `.env` as described in the example `.env.example` and fill in your
 
 In file `.env` you can switch between `dev`, `staging` or `prod`:
 
+Important!! When `RUN_MODE=dev` django uses `sqlite` database!!! You need to make containers in docker-compose, except 
+`backend` 
+
     RUN_MODE=
+
+In the `dev` mode skip the points 2. 4. 5. 6. 7.
 
 Before launching containers, make these lines in file `nginx/default.conf` :
 
@@ -44,11 +49,11 @@ Add this code `limit_req_zone $binary_remote_addr zone=mylimit:10m rate=1r/s;` a
 
     http {
 
-    limit_req_zone $binary_remote_addr zone=mylimit:10m rate=1r/s;
+        limit_req_zone $binary_remote_addr zone=mylimit:10m rate=1r/s;
     
 
-    include /etc/nginx/mime.types;
-    default_type application/octet-stream;
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
 
     ...
 
@@ -87,4 +92,7 @@ Recreate docker-compose:
 
     14. docker compose up -- build
 
-
+`To use the admin panel, follow the next command in the container "backend":`
+(Follow the finished steps)
+ 
+    python manage.py createsuperuser

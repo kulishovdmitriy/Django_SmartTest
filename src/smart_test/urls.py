@@ -15,8 +15,8 @@ urlpatterns = [
 
     path('<int:id>/next/', TestQuestionView.as_view(), name='next'),
 
-    path('test/create/', TestCreateView.as_view(), name='test_create'),
+    path('create/', TestCreateView.as_view(), name='test_create'),
 
-    path('test/<int:pk>/edit/', TestUpdateView.as_view(), name='test_edit'),
+    path('<int:id>/edit/', TestUpdateView.as_view(), name='test_edit'),
 
 ]
