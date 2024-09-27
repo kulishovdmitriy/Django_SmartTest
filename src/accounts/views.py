@@ -21,7 +21,7 @@ from accounts.tasks import send_contact_email
 logger = logging.getLogger('accounts')
 
 
-class UserListView(ListView):
+class AccountsListView(LoginRequiredMixin, ListView):
 
     model = User
     template_name = "user_list.html"
@@ -149,6 +149,6 @@ class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
     template_name = 'password_reset.html'
     email_template_name = 'password_reset_email.html'
     html_email_template_name = 'password_reset_email.html'
-    success_url = reverse_lazy('users:password_reset_done')
+    success_url = reverse_lazy('accounts:password_reset_done')
     success_message = "An email with instructions to reset your password has been sent to %(email)s."
     subject_template_name = 'password_reset_subject.txt'

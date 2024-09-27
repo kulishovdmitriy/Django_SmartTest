@@ -1,5 +1,14 @@
 {% extends 'base.html' %}
 
+{% block title %}
+    <title>All users</title>
+{% endblock %}
+
+{% block header %}
+  <h2>All users</h2>
+{% endblock %}
+
+{% block content %}
 <table class="table table-hover">
     <thead class="table-dark">
         <tr>
@@ -22,9 +31,8 @@
             <td>{{ user.email }}</td>
             <td>{{ user.birth_date }}</td>
 
-            <td>
-
         </tr>
 
     {% endfor %}
 </table>
+{% endblock %}
