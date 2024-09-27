@@ -9,6 +9,7 @@ def index(request):
         'index.html'
     )
 
+
 # 400 Bad Request
 def error_400(request, exception):
     """
