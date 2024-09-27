@@ -2,6 +2,10 @@
 
 {% load crispy_forms_tags %}
 
+{% block title %}
+    <title>{% if form.instance.pk %}Edit{% else %}Create{% endif %} Test</title>
+{% endblock %}
+
 {% block header %}
     <h1>{% if form.instance.pk %}Edit{% else %}Create{% endif %} Test</h1>
 {% endblock %}

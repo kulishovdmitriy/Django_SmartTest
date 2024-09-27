@@ -4,6 +4,10 @@
 
 {% load math_funcs %}
 
+{% block title %}
+    <title>Question: {{ question.text }}?</title>
+{% endblock %}
+
 {% block header %}
 
     <h1>Question: {{ question.text }}?</h1>
