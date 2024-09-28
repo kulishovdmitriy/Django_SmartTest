@@ -4,6 +4,10 @@ from django.shortcuts import render
 
 
 def index(request):
+    """
+        :param request: The HTTP request object that contains metadata about the request sent to the server.
+        :return: Renders and returns the 'index.html' template as an HTTP response.
+    """
     return render(
         request,
         'index.html'

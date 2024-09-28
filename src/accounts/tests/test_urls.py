@@ -4,6 +4,22 @@ from colorama import Fore, Style, init
 
 
 class TestUrls(TestCase):
+    """
+        TestUrls class is a Django TestCase that verifies the availability of public and authenticated URLs.
+
+        Attributes:
+            fixtures: List of fixtures to load initial data for tests.
+
+        Methods:
+            setUp:
+                Initializes the test client and enables colored output for test results.
+
+            test_urls_accounts_public_availability:
+                Verifies that public account URLs (registration and login) are accessible and returns a status code of 200.
+
+            test_urls_accounts_private_authenticated_availability:
+                Logs in with admin credentials and verifies that private account URLs (profile) are accessible.
+    """
 
     fixtures = [
         'dump.json'
