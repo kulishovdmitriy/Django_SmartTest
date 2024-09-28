@@ -86,6 +86,13 @@ class AccountCreateView(CreateView):
     form_class = AccountCreateForm
     success_url = reverse_lazy("accounts:login")
 
+    def form_valid(self, form):
+        result = super().form_valid(form)
+        user = form.instance
+        messages.info(self.request,
+                      f'Your account "{user.username}" has been successfully created. You can now log in.')
+        return result
+
 
 class AccountLoginView(LoginView):
     """

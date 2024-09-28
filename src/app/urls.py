@@ -46,6 +46,8 @@ urlpatterns = [
     path(f'{API_PREFIX}/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
 
     path(f'{API_PREFIX}/smart_test/', include('smart_test.api.urls')),
+
+    path(f'{API_PREFIX}/accounts/', include('accounts.api.urls')),
 ]
 
 urlpatterns += \
