@@ -22,6 +22,26 @@ logger = logging.getLogger('accounts')
 
 
 class AccountsListView(LoginRequiredMixin, ListView):
+    """
+        AccountsListView class displays a paginated list of user accounts filtered by query parameters.
+
+        Inherits from:
+            LoginRequiredMixin: Ensures the viewer is authenticated.
+            ListView: Provides a generic view for displaying a list of objects.
+
+        Attributes:
+            model (User): The model to retrieve data from.
+            template_name (str): The name of the template to render.
+            context_object_name (str): The context name to use for the list of objects.
+            paginate_by (int): The number of objects per page.
+
+        Methods:
+            get_queryset:
+                Filters the user list based on query parameters: 'first_name', 'last_name', 'email', and 'birth_date'.
+
+                Returns:
+                    QuerySet: A filtered queryset of users.
+    """
 
     model = User
     template_name = "user_list.html"
@@ -50,6 +70,16 @@ class AccountsListView(LoginRequiredMixin, ListView):
 
 
 class AccountCreateView(CreateView):
+    """
+        AccountCreateView: A Django CBV (Class-Based View) for creating a new User account.
+
+        Attributes:
+            model (Model): The model associated with this view. In this case, the User model.
+            template_name (str): The path of the template to render for this view.
+            form_class (Form): The form class used to create a new User. Here it is AccountCreateForm.
+            success_url (str): The URL to redirect to after a successful form submission.
+                               Here it is set to the login view of the accounts application.
+    """
 
     model = User
     template_name = "registration.html"
@@ -58,6 +88,22 @@ class AccountCreateView(CreateView):
 
 
 class AccountLoginView(LoginView):
+    """
+        AccountLoginView is a subclass of LoginView that handles user login actions.
+
+        Attributes:
+            template_name (str): Specifies the template to be used for rendering the login view.
+
+        Methods:
+            get_redirect_url:
+                Determines the URL to redirect after a successful login.
+                Returns the URL specified in the "next" GET parameter if present, otherwise redirects to the "core:index" URL.
+
+            form_valid:
+                Processes the valid form for user login.
+                Adds an informational message indicating successful login of the user.
+                Calls the form_valid method of the superclass and returns its result.
+    """
 
     template_name = "login.html"
 
@@ -73,11 +119,31 @@ class AccountLoginView(LoginView):
 
 
 class AccountLogoutView(LogoutView):
+    """
+        Handles the user logout process and renders the specified logout template.
 
+        Attributes:
+            template_name (str): The path to the template that should be rendered upon logging out.
+    """
     template_name = "logout.html"
 
 
 class AccountUpdateView(LoginRequiredMixin, ProcessFormView):
+    """
+        AccountUpdateView handles the display and processing of user account update forms.
+
+        The view is responsible for rendering the user's account update forms and handling
+        the form submission for updating both the user and profile instances.
+
+        Methods
+        -------
+        get(request, *args, **kwargs)
+            Renders the user and profile update forms on 'profile.html'.
+
+        post(request, *args, **kwargs)
+            Processes the submitted user and profile update forms, saves the data if valid,
+            and redirects to the profile page.
+    """
 
     def get(self, request, *args, **kwargs):
 
@@ -120,6 +186,36 @@ class AccountUpdateView(LoginRequiredMixin, ProcessFormView):
 
 
 class ContactUsView(LoginRequiredMixin, FormView):
+    """
+        ContactUsView handles requests for the contact us page.
+
+        Inherits:
+            LoginRequiredMixin: Mixin to ensure the user is authenticated.
+            FormView: Generic view that displays and processes a form.
+
+        Attributes:
+            template_name: The template name used to render the contact us page.
+            extra_content: Dictionary containing extra content to pass to the template.
+            success_url: The URL to redirect to after successful form submission.
+            form_class: The form class used to validate and process the contact us form.
+
+        Methods:
+            post(self, request, *args, **kwargs)
+                Handles POST requests to the view.
+
+                Args:
+                    request: The HTTP request object.
+                    *args: Variable length argument list.
+                    **kwargs: Additional keyword arguments.
+
+                Returns:
+                    HTTP response object indicating the result of processing the form.
+
+                If the form is valid, it tries to send a contact email asynchronously
+                and logs the success or failure of the email sending process. Returns
+                the appropriate response based on whether the form is valid or not.
+    """
+
     template_name = "contact_us.html"
     extra_content = {"title": "Send us a message!"}
     success_url = reverse_lazy("core:index")

@@ -5,6 +5,12 @@ from django.conf import settings
 
 @shared_task
 def send_contact_email(subject, message, from_email):
+    """
+        :param subject: The subject line of the email.
+        :param message: The body content of the email.
+        :param from_email: The sender's email address.
+        :return: None
+    """
     send_mail(
         subject=subject,
         message=message,
